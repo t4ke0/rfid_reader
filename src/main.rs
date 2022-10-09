@@ -1,14 +1,14 @@
-use std::time::Duration;
-use std::str;
 use serialport;
+use std::str;
+use std::time::Duration;
 
 const port: &str = "/dev/ttyS0";
 
 fn main() {
     let mut s = serialport::new(port, 9600)
         .timeout(Duration::from_millis(10))
-        .open().expect("failed to open port");
-
+        .open()
+        .expect("failed to open port");
 
     let mut buff = [0; 2];
     let mut line = String::new();
@@ -17,21 +17,21 @@ fn main() {
         if let Ok(n) = s.read(&mut buff) {
             let b = &buff[0..n];
             if !b.is_ascii() {
-                continue
+                continue;
             }
 
             if b.len() == 1 && b[0] == 3 {
-                break
+                break;
             } else if b.len() == 1 && b[0] == 2 {
                 index += 1;
-                continue
+                continue;
             }
 
             if index == 11 {
                 break;
             }
 
-            let r = String::from_iter(b.to_ascii_lowercase().iter().map(|v| { *v as char }));
+            let r = String::from_iter(b.to_ascii_lowercase().iter().map(|v| *v as char));
             println!("{:?} {:?}", b, r);
             line += &r;
             index += 1;
